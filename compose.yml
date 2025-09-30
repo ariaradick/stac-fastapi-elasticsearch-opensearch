@@ -71,8 +71,8 @@ services:
       ES_JAVA_OPTS: -Xms512m -Xmx1g
       action.destructive_requires_name: false
     volumes:
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      - ./elasticsearch/snapshots:/usr/share/elasticsearch/snapshots
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:z
+      - ./elasticsearch/snapshots:/usr/share/elasticsearch/snapshots:z
     ports:
       - "9200:9200"
 
