@@ -23,9 +23,9 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./stac_fastapi:/app/stac_fastapi
-      - ./scripts:/app/scripts
-      - ./esdata:/usr/share/elasticsearch/data
+      - ./stac_fastapi:/app/stac_fastapi:z
+      - ./scripts:/app/scripts:z
+      - ./esdata:/usr/share/elasticsearch/data:z
     depends_on:
       - elasticsearch
 
