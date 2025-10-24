@@ -15,10 +15,14 @@ WORKDIR /app
 
 COPY . /app
 
+RUN chmod +x /app/scripts/wait-for-it-es.sh /app/scripts/docker-entrypoint.sh
+
 RUN pip install --no-cache-dir -e ./stac_fastapi/core
 RUN pip install --no-cache-dir -e ./stac_fastapi/sfeos_helpers
 RUN pip install --no-cache-dir ./stac_fastapi/elasticsearch[server]
 
 EXPOSE 8080
+
+ENTRYPOINT ["/app/scripts/docker-entrypoint.sh"]
 
 CMD ["uvicorn", "stac_fastapi.elasticsearch.app:app", "--host", "0.0.0.0", "--port", "8080"]
