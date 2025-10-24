@@ -90,3 +90,12 @@ services:
       - ./opensearch/snapshots:/usr/share/opensearch/snapshots
     ports:
       - "9202:9202"
+
+
+  stac-browser:
+    container_name: stac-browser
+    image: ghcr.io/radiantearth/stac-browser:latest
+    ports:
+      - 8081:8080
+    environment:
+      SB_catalogUrl: "http://10.0.0.111:8080"
