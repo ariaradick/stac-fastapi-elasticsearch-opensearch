@@ -41,6 +41,18 @@ DEFAULT_QUERYABLES: Dict[str, Dict[str, Any]] = {
         "description": "Creation Timestamp",
         "$ref": "https://schemas.stacspec.org/v1.0.0/item-spec/json-schema/datetime.json#/properties/updated",
     },
+    "variable_id": {
+        "description": "Variable ID",
+        "type": "string"
+    },
+    "experiment_id": {
+      "description": "Experiment ID",
+      "type": "string"
+    },
+    "table_id": {
+        "description": "Table ID",
+        "type": "string"
+    }
 }
 """Queryables that are present in all collections."""
 
