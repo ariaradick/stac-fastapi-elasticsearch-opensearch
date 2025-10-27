@@ -1,9 +1,7 @@
 services:
   app-elasticsearch:
     container_name: stac-fastapi-es
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile.deploy.es
+    image: stac-fastapi-elasticsearch-opensearch-app-elasticsearch
     environment:
       - STAC_FASTAPI_TITLE=stac-fastapi-elasticsearch
       - STAC_FASTAPI_DESCRIPTION=A STAC FastAPI with an Elasticsearch backend
@@ -21,11 +19,9 @@ services:
       - BACKEND=elasticsearch
       - DATABASE_REFRESH=true
       - ENABLE_COLLECTIONS_SEARCH_ROUTE=true
-      - REDIS_ENABLE=true
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - REDIS_ENABLE=false
     ports:
-      - "8080:8080"
+      - "11622:8080"
     volumes:
       - ./stac_fastapi:/app/stac_fastapi:z
       - ./scripts:/app/scripts:z
@@ -33,48 +29,9 @@ services:
     depends_on:
       - elasticsearch
 
-  app-opensearch:
-    container_name: stac-fastapi-os
-    image: stac-utils/stac-fastapi-os
-    restart: always
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile.dev.os
-    environment:
-      - STAC_FASTAPI_TITLE=stac-fastapi-opensearch
-      - STAC_FASTAPI_DESCRIPTION=A STAC FastAPI with an Opensearch backend
-      - STAC_FASTAPI_VERSION=6.0.0
-      - STAC_FASTAPI_LANDING_PAGE_ID=stac-fastapi-opensearch
-      - APP_HOST=0.0.0.0
-      - APP_PORT=8082
-      - RELOAD=true
-      - ENVIRONMENT=local
-      - WEB_CONCURRENCY=10
-      - ES_HOST=opensearch
-      - ES_PORT=9202
-      - ES_USE_SSL=false
-      - ES_VERIFY_CERTS=false
-      - BACKEND=opensearch
-      - STAC_FASTAPI_RATE_LIMIT=200/minute
-      - ENABLE_COLLECTIONS_SEARCH_ROUTE=true
-      - REDIS_ENABLE=true
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    ports:
-      - "8082:8082"
-    volumes:
-      - ./stac_fastapi:/app/stac_fastapi
-      - ./scripts:/app/scripts
-      - ./osdata:/usr/share/opensearch/data
-    depends_on:
-      - opensearch
-      - redis
-    command:
-      bash -c "./scripts/wait-for-it-es.sh os-container:9202 && python -m stac_fastapi.opensearch.app"
-
   elasticsearch:
     container_name: es-container
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTICSEARCH_VERSION:-8.19.5}
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTICSEARCH_VERSION:-8.11.0}
     hostname: elasticsearch
     environment:
       ES_JAVA_OPTS: -Xms512m -Xmx1g
@@ -85,26 +42,10 @@ services:
     ports:
       - "9200:9200"
 
-  opensearch:
-    container_name: os-container
-    image: opensearchproject/opensearch:${OPENSEARCH_VERSION:-2.19.3}
-    hostname: opensearch
-    environment:
-      - discovery.type=single-node
-      - plugins.security.disabled=true
-      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
-      - action.destructive_requires_name=false
-    volumes:
-      - ./opensearch/config/opensearch.yml:/usr/share/opensearch/config/opensearch.yml
-      - ./opensearch/snapshots:/usr/share/opensearch/snapshots
-    ports:
-      - "9202:9202"
-
-
   stac-browser:
     container_name: stac-browser
     image: ghcr.io/radiantearth/stac-browser:latest
     ports:
-      - 8081:8080
+      - 11624:8080
     environment:
-      SB_catalogUrl: "http://10.0.0.111:8080"
+      SB_catalogUrl: "http://140.208.147.13:11622"
